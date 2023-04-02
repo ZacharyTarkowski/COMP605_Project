@@ -1,17 +1,6 @@
-#include <stdio.h>
-#include <math.h>
-#include <cstring>
-#include <iostream>
-#include <iomanip>
-#include <complex>
-#include <cmath>
+#include "FFT_Serial.h"
 
-#define cnum std::complex<double>
-using namespace std::complex_literals;
 
-static const unsigned bit_rev_lut[] = {
-    0, 4, 2, 6, 1, 5, 3, 7
-};
 
 void bit_rev_8(cnum* fft_arr)
 {
@@ -58,21 +47,21 @@ void FFT_8(cnum* fft_arr)
 
 
 
-void FFT_8x8(cnum **fft_arr)
+void FFT_8x8(xformBlock* blockptr)
 {
     int row, col;
     cnum col_arr[8];
     
     for (row=0 ; row <8 ; row++)
         {
-            FFT_8(fft_arr[row]);
+            FFT_8(blockptr->data[row]);
         }
 
     for (col=0 ; col <8 ; col++)
         {
             for(row = 0; row <8 ; row++)
             {
-                col_arr[row] = fft_arr[row][col];
+                col_arr[row] = blockptr->data[row][col];
                 //std::cout<<" row"<<row<<" col"<<col;
             }
            
@@ -87,7 +76,7 @@ void FFT_8x8(cnum **fft_arr)
 
             for(row = 0; row <8 ; row++)
             {
-                fft_arr[row][col] = col_arr[row];
+                blockptr->data[row][col] = col_arr[row];
             }
             
         }
@@ -109,21 +98,21 @@ void IFFT_8(cnum* fft_arr)
     }
 }
 
-void IFFT_8x8(cnum **fft_arr)
+void IFFT_8x8(xformBlock* blockptr)
 {
     int row, col;
     cnum col_arr[8];
     
     for (row=0 ; row <8 ; row++)
         {
-            IFFT_8(fft_arr[row]);
+            IFFT_8(blockptr->data[row]);
         }
 
     for (col=0 ; col <8 ; col++)
         {
             for(row = 0; row <8 ; row++)
             {
-                col_arr[row] = fft_arr[row][col];
+                col_arr[row] = blockptr->data[row][col];
                 //std::cout<<" row"<<row<<" col"<<col;
             }
            
@@ -138,7 +127,7 @@ void IFFT_8x8(cnum **fft_arr)
 
             for(row = 0; row <8 ; row++)
             {
-                fft_arr[row][col] = col_arr[row];
+                blockptr->data[row][col] = col_arr[row];
             }
             
         }
@@ -148,28 +137,30 @@ int main()
 {
     using namespace std::complex_literals;
 
-    cnum **fft_arr;
-    fft_arr = new cnum *[8];
-    for (int i =0; i< 8; i++)
-    {
-        fft_arr[i] = new cnum[8];
-    }
+    xformBlock block;
 
-    cnum fft_arr2[8];
+    // cnum **fft_arr;
+    // fft_arr = new cnum *[8];
+    // for (int i =0; i< 8; i++)
+    // {
+    //     fft_arr[i] = new cnum[8];
+    // }
+
+     cnum fft_arr2[8];
 
     for (int i =0; i< 8; i++)
     {
         for (int j =0; j< 8; j++)
         {
-            fft_arr[i][j] = (double)i * 1i;
+            block.data[i][j] = (double)i * 1;
             //std::cout << fft_arr[i][j] << '\n';
         }
 
-        fft_arr2[i] =  (double)i * 1i;
+        fft_arr2[i] =  (double)i * 1;
     }
 
-    FFT_8x8(fft_arr);
-    IFFT_8x8(fft_arr);
+    FFT_8x8(&block);
+    IFFT_8x8(&block);
 
     // for (int i =0; i< 8; i++)
     // {
@@ -181,7 +172,7 @@ int main()
         for (int j =0; j< 8; j++)
         {
             
-            std::cout << fft_arr[i][j];
+            std::cout << block.data[i][j];
         }
 
         std::cout << "\n";
