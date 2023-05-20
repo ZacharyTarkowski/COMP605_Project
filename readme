@@ -1,1 +1,1 @@
-testcommmit3
+Requires the OpenCV library, as well as a cluster if MPI will be used
