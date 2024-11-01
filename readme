@@ -1,1 +1,3 @@
 Requires the OpenCV library, as well as a cluster if MPI will be used
+
+Parallel programming coursework project, compresses an image using the FFT, done in parallel using 3 parallel programming standards :  OpenMP, MPI, and pThreads.
